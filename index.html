@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Premium Spin Wheel</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Spin Wheel</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><circle cx='50' cy='50' r='35' fill='none' stroke='white' stroke-width='8'/><path d='M50 15 L50 85 M15 50 L85 50 M25 25 L75 75 M25 75 L75 25' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%236366f1'/><circle cx='50' cy='50' r='35' fill='none' stroke='white' stroke-width='8'/><path d='M50 15 L50 85 M15 50 L85 50 M25 25 L75 75 M25 75 L75 25' stroke='white' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='white'/></svg>">
+
     <style>
         :root {
             --bg: #f8fafc;
@@ -112,7 +117,7 @@
             transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        h2 { font-size: 1.2rem; margin-bottom: 10px; color: var(--text); }
+        h2 { font-size: 1.2rem; margin-bottom: 10px; color: var(--text); display: flex; justify-content: space-between; align-items: center;}
 
         textarea {
             width: 100%;
@@ -133,11 +138,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            gap: 10px;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .val-badge {
+            background: var(--bg);
+            color: var(--primary);
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            border: 1px solid var(--border);
+            min-width: 35px;
+            text-align: center;
         }
 
         input[type="range"] {
-            width: 60%;
+            flex: 1 1 180px; /* Expands to fill space, wraps if less than 180px */
+            width: 100%;
             accent-color: var(--primary);
         }
 
@@ -150,13 +177,27 @@
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.2s;
             width: 100%;
         }
 
         button:active { transform: scale(0.97); }
         button:hover { background: var(--primary-hover); }
-        button:disabled { background: var(--text-muted); cursor: not-allowed; }
+        button:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+        
+        .btn-outline:hover {
+            background: var(--bg);
+            border-color: var(--text-muted);
+        }
 
         .header-controls {
             display: flex;
@@ -256,24 +297,19 @@
 
     <div class="controls-section">
         <div class="card">
-            <h2>Items (One per line)</h2>
-            <textarea id="items-input">Prize 1
-Prize 2
-Try Again
-Jackpot!
-Bonus Spin
-Lose Turn</textarea>
+            <h2>Items</h2>
+            <textarea id="items-input"></textarea>
         </div>
 
         <div class="card">
             <h2>Settings</h2>
             <div class="setting-group">
-                <label>Speed (Power)</label>
-                <input type="range" id="power-slider" min="0.1" max="1" step="0.1" value="0.5">
+                <div class="setting-label">Speed <span class="val-badge" id="power-val">50</span></div>
+                <input type="range" id="power-slider" min="1" max="100" step="1" value="50">
             </div>
             <div class="setting-group">
-                <label>Duration (Friction)</label>
-                <input type="range" id="friction-slider" min="0.980" max="0.998" step="0.001" value="0.992">
+                <div class="setting-label">Duration <span class="val-badge" id="friction-val">65</span></div>
+                <input type="range" id="friction-slider" min="1" max="100" step="1" value="65">
             </div>
             <div class="setting-group">
                 <label>Sound Effects</label>
@@ -283,25 +319,29 @@ Lose Turn</textarea>
                 </label>
             </div>
             <div class="setting-group">
-                <label>Keep Results History</label>
+                <label>Keep History</label>
                 <label class="switch">
                     <input type="checkbox" id="history-toggle" checked>
                     <span class="slider"></span>
                 </label>
             </div>
+            <button id="reset-btn" class="btn-outline">Reset to Defaults</button>
         </div>
 
         <div class="card">
-            <div class="setting-group">
-                <h2>Results History</h2>
+            <div class="setting-group" style="margin-bottom: 0;">
+                <h2 style="margin: 0;">Results History</h2>
                 <button class="icon-btn" id="clear-history" style="width:30px;height:30px;font-size:0.8rem;" title="Clear">🗑️</button>
             </div>
-            <ul class="history-list" id="history-list"></ul>
+            <ul class="history-list" id="history-list" style="margin-top: 10px;"></ul>
         </div>
     </div>
 </div>
 
 <script>
+    // --- Default Data ---
+    const DEFAULT_ITEMS = "Prize 1\nPrize 2\nTry Again\nJackpot!\nBonus Spin\nLose Turn";
+
     // --- State & DOM Elements ---
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
@@ -310,11 +350,14 @@ Lose Turn</textarea>
     const resultDisplay = document.getElementById('result-display');
     const powerSlider = document.getElementById('power-slider');
     const frictionSlider = document.getElementById('friction-slider');
+    const powerVal = document.getElementById('power-val');
+    const frictionVal = document.getElementById('friction-val');
     const soundToggle = document.getElementById('sound-toggle');
     const historyToggle = document.getElementById('history-toggle');
     const historyList = document.getElementById('history-list');
     const themeToggle = document.getElementById('theme-toggle');
     const clearHistoryBtn = document.getElementById('clear-history');
+    const resetBtn = document.getElementById('reset-btn');
 
     let items = [];
     let currentAngle = 0;
@@ -323,7 +366,66 @@ Lose Turn</textarea>
     let lastTickSegment = -1;
     let animationFrame;
 
-    // --- Audio Context Synthesis (No external files needed) ---
+    // --- Local Storage Management ---
+    function saveSettings() {
+        const settings = {
+            items: itemsInput.value,
+            power: powerSlider.value, // Now saves 1-100
+            friction: frictionSlider.value, // Now saves 1-100
+            sound: soundToggle.checked,
+            historyEnabled: historyToggle.checked,
+            theme: document.documentElement.getAttribute('data-theme'),
+            history: historyList.innerHTML
+        };
+        localStorage.setItem('spinWheelSettings', JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+        const savedSettings = localStorage.getItem('spinWheelSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            itemsInput.value = settings.items !== undefined ? settings.items : DEFAULT_ITEMS;
+            
+            // Backwards compatibility check in case old decimals were saved
+            let p = settings.power !== undefined ? settings.power : 50;
+            let f = settings.friction !== undefined ? settings.friction : 65;
+            if(p < 1) p = 50; 
+            if(f < 1) f = 65;
+
+            powerSlider.value = p;
+            frictionSlider.value = f;
+            if (settings.sound !== undefined) soundToggle.checked = settings.sound;
+            if (settings.historyEnabled !== undefined) historyToggle.checked = settings.historyEnabled;
+            if (settings.theme !== undefined) document.documentElement.setAttribute('data-theme', settings.theme);
+            if (settings.history !== undefined) historyList.innerHTML = settings.history;
+        } else {
+            itemsInput.value = DEFAULT_ITEMS;
+        }
+        updateBadgeValues();
+    }
+
+    function resetToDefaults() {
+        if(confirm("Are you sure you want to reset all settings and history?")) {
+            localStorage.removeItem('spinWheelSettings');
+            itemsInput.value = DEFAULT_ITEMS;
+            powerSlider.value = 50;
+            frictionSlider.value = 65;
+            soundToggle.checked = true;
+            historyToggle.checked = true;
+            historyList.innerHTML = '';
+            document.documentElement.setAttribute('data-theme', 'dark');
+            resultDisplay.innerText = "Ready to spin!";
+            updateBadgeValues();
+            updateItems();
+        }
+    }
+
+    function updateBadgeValues() {
+        powerVal.innerText = powerSlider.value;
+        frictionVal.innerText = frictionSlider.value;
+    }
+
+    // --- Audio Context Synthesis ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
@@ -344,7 +446,6 @@ Lose Turn</textarea>
         osc.frequency.setValueAtTime(400, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.03);
         
-        // Intensity depends on speed
         let vol = Math.min(0.5, angularVelocity * 2);
         gain.gain.setValueAtTime(vol, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
@@ -382,10 +483,10 @@ Lose Turn</textarea>
         items = itemsInput.value.split('\n').filter(i => i.trim() !== '');
         if(items.length === 0) items = ['Add Items'];
         drawWheel();
+        saveSettings();
     }
 
     function getSegmentColor(index, total) {
-        // Premium looking HSL colors
         const hue = (index * (360 / total)) % 360;
         return `hsl(${hue}, 70%, 60%)`;
     }
@@ -399,27 +500,22 @@ Lose Turn</textarea>
         const arcLength = (2 * Math.PI) / items.length;
 
         ctx.clearRect(0, 0, width, height);
-
-        // Normalize angle to avoid rendering glitches
         currentAngle = currentAngle % (2 * Math.PI);
 
         for (let i = 0; i < items.length; i++) {
             const startAngle = currentAngle + i * arcLength;
             const endAngle = startAngle + arcLength;
 
-            // Draw Segment
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, radius, startAngle, endAngle);
             ctx.fillStyle = getSegmentColor(i, items.length);
             ctx.fill();
             
-            // Segment Border
             ctx.lineWidth = 2;
             ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim();
             ctx.stroke();
 
-            // Draw Text
             ctx.save();
             ctx.translate(centerX, centerY);
             ctx.rotate(startAngle + arcLength / 2);
@@ -428,7 +524,7 @@ Lose Turn</textarea>
             ctx.font = "bold 32px sans-serif";
             ctx.shadowColor = "rgba(0,0,0,0.5)";
             ctx.shadowBlur = 4;
-            // Shorten text if too long
+            
             let text = items[i];
             if(text.length > 15) text = text.substring(0, 15) + '...';
             ctx.fillText(text, radius - 30, 10);
@@ -438,16 +534,9 @@ Lose Turn</textarea>
 
     // --- Physics & Animation ---
     function getWinnerIndex() {
-        // The pointer is at the top (which is -PI/2 relative to standard canvas 0 angle)
-        // We need to calculate which segment falls under the 270 degree (-90 deg) mark.
         const arcLength = (2 * Math.PI) / items.length;
-        
-        // Offset by PI/2 because pointer is at top
         let pointerAngle = (3 * Math.PI / 2) - currentAngle;
-        
-        // Normalize
         pointerAngle = ((pointerAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        
         const index = Math.floor(pointerAngle / arcLength);
         return index;
     }
@@ -456,18 +545,17 @@ Lose Turn</textarea>
         if (angularVelocity > 0) {
             currentAngle += angularVelocity;
             
-            // Friction logic
-            let friction = parseFloat(frictionSlider.value);
+            // Map 1-100 to friction 0.980 - 0.998
+            let frictionValue = parseInt(frictionSlider.value);
+            let friction = 0.980 + (frictionValue / 100) * 0.018; 
             angularVelocity *= friction;
 
-            // Tick logic
             const currentSegment = getWinnerIndex();
             if (currentSegment !== lastTickSegment) {
                 playTick();
                 lastTickSegment = currentSegment;
             }
 
-            // Stop threshold
             if (angularVelocity < 0.001) {
                 angularVelocity = 0;
                 isSpinning = false;
@@ -490,7 +578,8 @@ Lose Turn</textarea>
         if (historyToggle.checked) {
             const li = document.createElement('li');
             li.innerText = winnerText;
-            historyList.prepend(li); // Add to top
+            historyList.prepend(li);
+            saveSettings(); 
         }
     }
 
@@ -507,8 +596,9 @@ Lose Turn</textarea>
         spinBtn.style.opacity = "0.5";
         resultDisplay.innerText = "Spinning...";
 
-        // Add some randomness to starting power
-        const basePower = parseFloat(powerSlider.value);
+        // Map 1-100 speed to 0.1 - 1.0 base power
+        const powerValue = parseInt(powerSlider.value);
+        const basePower = powerValue / 100;
         const randomBoost = Math.random() * 0.1;
         angularVelocity = basePower + randomBoost;
 
@@ -520,22 +610,31 @@ Lose Turn</textarea>
     // --- Event Listeners ---
     spinBtn.addEventListener('click', spin);
     itemsInput.addEventListener('input', updateItems);
+    resetBtn.addEventListener('click', resetToDefaults);
+    
+    // Sliders
+    const handleSliderInput = () => { updateBadgeValues(); saveSettings(); };
+    powerSlider.addEventListener('input', handleSliderInput);
+    frictionSlider.addEventListener('input', handleSliderInput);
+    
+    // Toggles
+    soundToggle.addEventListener('change', saveSettings);
+    historyToggle.addEventListener('change', saveSettings);
     
     themeToggle.addEventListener('click', () => {
         const html = document.documentElement;
-        if (html.getAttribute('data-theme') === 'dark') {
-            html.setAttribute('data-theme', 'light');
-        } else {
-            html.setAttribute('data-theme', 'dark');
-        }
-        drawWheel(); // Redraw to update border colors
+        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        drawWheel();
+        saveSettings();
     });
 
     clearHistoryBtn.addEventListener('click', () => {
         historyList.innerHTML = '';
+        saveSettings();
     });
 
     // Initialize
+    loadSettings();
     updateItems();
 </script>
 
