@@ -52,6 +52,11 @@
         </div>
         
         <div id="result-display">Ready to spin!</div>
+        <div id="knockout-status" style="display: none; font-size: 0.95rem; color: var(--text-muted); margin-bottom: 15px; font-weight: 500;">
+            Remaining: <span id="knockout-count" style="color: var(--primary); font-weight: bold;">0/0</span> items
+            &nbsp;•&nbsp; 
+            <a href="#" id="knockout-reset-btn" style="color: var(--primary); text-decoration: none; border-bottom: 1px dashed var(--primary); transition: opacity 0.2s;">Restart Knockout</a>
+        </div>
         
         <button id="spin-btn">SPIN THE WHEEL</button>
     </div>
@@ -101,6 +106,13 @@
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="setting-group">
+                <label class="setting-label">Knockout Mode</label>
+                <label class="switch">
+                    <input type="checkbox" id="knockout-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <button id="reset-btn" class="btn-outline">Reset to Defaults</button>
         </div>
 
@@ -111,6 +123,16 @@
             </div>
             <ul class="history-list" id="history-list" style="margin-top: 10px;"></ul>
         </div>
+    </div>
+</div>
+
+<!-- Celebration Overlay Modal -->
+<div id="celebration-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+        <div class="modal-emoji">🏆</div>
+        <div class="modal-subtitle" id="modal-subtitle">Winner</div>
+        <div class="modal-title" id="modal-title">Prize Name</div>
+        <button id="modal-close-btn">Awesome!</button>
     </div>
 </div>
 

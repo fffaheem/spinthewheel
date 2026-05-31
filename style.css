@@ -280,3 +280,188 @@ button:disabled { background: var(--text-muted); cursor: not-allowed; transform:
 
 input:checked + .slider { background-color: var(--primary); }
 input:checked + .slider:before { transform: translateX(20px); }
+
+#knockout-reset-btn:hover {
+    opacity: 0.8;
+}
+
+#knockout-status {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+canvas.winner-glow {
+    animation: winnerGlowPulse 1.5s infinite alternate, winnerScalePulse 1.5s infinite alternate;
+    border-color: var(--primary) !important;
+    transition: transform 0.3s ease-out, filter 0.3s ease-out;
+}
+
+@keyframes winnerGlowPulse {
+    from {
+        filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.4)) drop-shadow(0 0 20px rgba(99, 102, 241, 0.2));
+    }
+    to {
+        filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.8)) drop-shadow(0 0 45px rgba(99, 102, 241, 0.5));
+    }
+}
+
+@keyframes winnerScalePulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.03);
+    }
+}
+
+/* Celebration Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.35s ease-out;
+    padding: 24px;
+}
+
+.modal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
+    animation: cardScaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-emoji {
+    font-size: 4.5rem;
+    margin-bottom: 15px;
+    animation: floatEmoji 2.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+.modal-subtitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.modal-title {
+    font-size: 2.3rem;
+    font-weight: 850;
+    color: var(--text);
+    margin-bottom: 30px;
+    line-height: 1.25;
+    word-break: break-word;
+    /* Elegant gradient text */
+    background: linear-gradient(135deg, var(--text) 20%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#modal-close-btn {
+    background: var(--primary);
+    color: white;
+    font-size: 1.1rem;
+    padding: 15px 30px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    width: 100%;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+#modal-close-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.45);
+}
+
+#modal-close-btn:active {
+    transform: translateY(0);
+}
+
+/* Toast Notification for Knockouts */
+.knockout-toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 24px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: calc(100% - 48px);
+    max-width: 360px;
+}
+
+.knockout-toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-icon {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+}
+
+.toast-body {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 750;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.toast-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes cardScaleIn {
+    from { opacity: 0; transform: scale(0.85) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes floatEmoji {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(4deg); }
+}
