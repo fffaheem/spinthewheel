@@ -1,0 +1,282 @@
+:root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --border: #e2e8f0;
+    --wheel-border: #cbd5e1;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #818cf8;
+    --primary-hover: #6366f1;
+    --border: #334155;
+    --wheel-border: #475569;
+    --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+    /* Prevent pull-to-refresh on mobile which feels un-app-like */
+    overscroll-behavior-y: contain; 
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    max-width: 1000px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .container { flex-direction: column; align-items: center; }
+    body { padding: 10px; }
+}
+
+.wheel-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.wheel-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    margin-bottom: 20px;
+    filter: drop-shadow(var(--shadow));
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid var(--wheel-border);
+    transition: border-color 0.3s;
+}
+
+.pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+    z-index: 10;
+}
+
+.controls-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.card {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+h2 { font-size: 1.2rem; margin-bottom: 10px; color: var(--text); display: flex; justify-content: space-between; align-items: center;}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.3s;
+}
+
+textarea:focus { outline: none; border-color: var(--primary); }
+
+.setting-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap; 
+    gap: 10px;
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    color: var(--text);
+}
+
+.val-badge {
+    background: var(--bg);
+    color: var(--primary);
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    border: 1px solid var(--border);
+    min-width: 35px;
+    text-align: center;
+}
+
+input[type="range"] {
+    flex: 1 1 180px; 
+    width: 100%;
+    accent-color: var(--primary);
+}
+
+select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+select:focus { border-color: var(--primary); }
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    /* Disable mobile double-tap zoom */
+    touch-action: manipulation;
+}
+
+button:active { transform: scale(0.97); }
+button:hover { background: var(--primary-hover); }
+button:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; }
+
+.btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+.btn-outline:hover {
+    background: var(--bg);
+    border-color: var(--text-muted);
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.icon-btn {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.icon-btn:hover { background: var(--border); }
+
+#result-display {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-height: 40px;
+    margin: 10px 0;
+    color: var(--primary);
+}
+
+.history-list {
+    list-style: none;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.history-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--border);
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px; width: 14px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(20px); }
