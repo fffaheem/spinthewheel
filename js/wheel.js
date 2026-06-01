@@ -101,13 +101,13 @@ function updateItems() {
     var nwinHint = document.getElementById('nwin-hint');
     if (nwinHint) nwinHint.textContent = 'min ' + minSpins;
 
-    if (nToWinTarget < minSpins) {
-        nToWinTarget = minSpins;
+    if (nToWinTarget < 2) {
+        nToWinTarget = 2;
         var ntowinDisplay = document.getElementById('ntowin-display');
         if (ntowinDisplay) ntowinDisplay.textContent = nToWinTarget;
     }
     var ntowinHint = document.getElementById('ntowin-hint');
-    if (ntowinHint) ntowinHint.textContent = 'min ' + minSpins;
+    if (ntowinHint) ntowinHint.textContent = 'min 2';
 
     canvas.classList.remove('winner-glow');
     updateKnockoutStatus();

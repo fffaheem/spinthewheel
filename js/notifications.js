@@ -69,7 +69,8 @@ function showScoreToast(item, score, target) {
     var toast = document.createElement('div');
     toast.className = 'score-toast';
     var targetTxt = target ? ' / ' + target : '';
-    toast.innerHTML = '⭐ <strong>' + escHtml(item) + '</strong> — ' + score + targetTxt + ' win' + (score !== 1 ? 's' : '');
+    var label = knockoutEnabled ? (score === 1 ? ' knock' : ' knocks') : (score === 1 ? ' win' : ' wins');
+    toast.innerHTML = '⭐ <strong>' + escHtml(item) + '</strong> — ' + score + targetTxt + label;
     document.body.appendChild(toast);
 
     requestAnimationFrame(function() {

@@ -248,6 +248,12 @@ function handleNToWinSpin(winnerItem) {
             // HOT POTATO: this item has hit the target → it is ELIMINATED
             setTimeout(function() {
                 eliminateItem(winnerItem);
+                
+                // Task 4: Reset all remaining active items' scores to 0
+                activeItems.forEach(function(item) {
+                    nToWinScores[item] = 0;
+                });
+
                 updateScoreboard();
 
                 playElimSound();
@@ -260,7 +266,7 @@ function handleNToWinSpin(winnerItem) {
                 toast.innerHTML =
                     '<div class="toast-icon">🔥</div>' +
                     '<div class="toast-body">' +
-                        '<div class="toast-title">Hot Potato!</div>' +
+                        '<div class="toast-title">Eliminated!</div>' +
                         '<div class="toast-desc"><strong>' + escHtml(winnerItem) + '</strong> reached ' + nToWinTarget + ' — eliminated!</div>' +
                     '</div>';
                 document.body.appendChild(toast);
@@ -394,7 +400,7 @@ function updateScoreboard() {
     // Update in-game configuration label based on knockoutEnabled
     var ntowinLabel = document.getElementById('ntowin-label');
     if (ntowinLabel) {
-        ntowinLabel.textContent = knockoutEnabled ? 'Wins to eliminate' : 'Wins to win';
+        ntowinLabel.textContent = knockoutEnabled ? 'Knocks to eliminate' : 'Wins to win';
     }
 
     // Update scoreboard title
@@ -424,7 +430,7 @@ function updateModeBadge() {
     var labels = {
         classic: '🎯 Classic',
         nwin:    '🏅 N Win · ' + nWinTotal + ' spins/round',
-        ntowin:  '🎖️ N to Win · eliminate at ' + nToWinTarget,
+        ntowin:  '🎖️ N to Win · ' + (knockoutEnabled ? 'eliminate at ' + nToWinTarget + ' knocks' : 'win at ' + nToWinTarget),
     };
     modeBadge.textContent = labels[gameMode] || '🎯 Classic';
 }
