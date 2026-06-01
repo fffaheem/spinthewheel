@@ -19,6 +19,7 @@ function resumeAudio() {
 
 // ---- Wheel tick (called per segment crossing) ----
 function playTick() {
+    if (document.hidden) return;
     if (!soundToggle.checked) return;
     initAudio();
     if (!audioCtx) return;
@@ -43,6 +44,7 @@ function playTick() {
 
 // ---- Win jingle ----
 function playWinSound(isUltimate) {
+    if (document.hidden) return;
     if (!soundToggle.checked) return;
     initAudio();
     if (!audioCtx) return;
@@ -76,6 +78,7 @@ function playWinSound(isUltimate) {
 
 // ---- Elimination sound (descending buzz) ----
 function playElimSound() {
+    if (document.hidden) return;
     if (!soundToggle.checked) return;
     initAudio();
     if (!audioCtx) return;
