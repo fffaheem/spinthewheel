@@ -65,7 +65,8 @@ function drawWheel() {
         ctx.shadowBlur  = 4;
         ctx.font        = 'bold ' + fontSize + 'px -apple-system, BlinkMacSystemFont, sans-serif';
 
-        var text = list[i];
+        var item = list[i];
+        var text = (item && typeof item === 'object') ? item.name : (item || '');
         if (text.length > maxChars) text = text.substring(0, maxChars - 1) + '…';
         ctx.fillText(text, r - 22, fontSize * 0.36);
         ctx.restore();
@@ -83,8 +84,12 @@ function drawWheel() {
 
 // ---- Called whenever the textarea changes ----
 function updateItems() {
-    items = itemsInput.value.split('\n').filter(function(t) { return t.trim() !== ''; });
-    if (items.length === 0) items = ['Add Items'];
+    var rawText = itemsInput.value.split('\n').filter(function(t) { return t.trim() !== ''; });
+    if (rawText.length === 0) rawText = ['Add Items'];
+
+    items = rawText.map(function(text, idx) {
+        return { id: 'item_' + idx + '_' + Math.random(), name: text };
+    });
 
     // Reset active list and eliminated set
     activeItems = items.slice();

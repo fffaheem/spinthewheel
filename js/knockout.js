@@ -26,8 +26,18 @@ function updateKnockoutStatus() {
 }
 
 // Remove an item from the active pool
-function eliminateItem(itemName) {
-    var idx = activeItems.indexOf(itemName);
-    if (idx !== -1) activeItems.splice(idx, 1);
-    eliminatedItems.add(itemName);
+function eliminateItem(item) {
+    var idx = activeItems.indexOf(item);
+    if (idx === -1 && typeof item === 'string') {
+        idx = activeItems.findIndex(function(x) { return x.name === item || x === item; });
+    }
+    if (idx !== -1) {
+        var actualItem = activeItems[idx];
+        activeItems.splice(idx, 1);
+        if (actualItem && typeof actualItem === 'object') {
+            eliminatedItems.add(actualItem.id);
+        } else {
+            eliminatedItems.add(actualItem);
+        }
+    }
 }

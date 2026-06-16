@@ -16,9 +16,10 @@ function resetModeScores() {
     // Seed score maps so UI shows 0 from the start
     var list = getActiveList();
     list.forEach(function(item) {
-        nWinScores[item]      = 0;
-        nWinRoundScores[item] = 0;
-        nToWinScores[item]    = 0;
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        nWinScores[itemId]      = 0;
+        nWinRoundScores[itemId] = 0;
+        nToWinScores[itemId]    = 0;
     });
 
     updateScoreboard();
@@ -38,19 +39,21 @@ function handleSpinComplete(winnerItem) {
 //  CLASSIC MODE
 // ================================================================
 function handleClassicWin(winnerItem) {
+    var winnerName = (winnerItem && typeof winnerItem === 'object') ? winnerItem.name : winnerItem;
     if (knockoutEnabled) {
         _classicKnockoutRound(winnerItem);
     } else {
-        resultDisplay.textContent = '🎉 ' + winnerItem;
+        resultDisplay.textContent = '🎉 ' + winnerName;
         playWinSound(false);
         startConfetti(2500);
-        showCelebrationModal('Winner!', winnerItem, '🎉');
-        addHistory(winnerItem);
+        showCelebrationModal('Winner!', winnerName, '🎉');
+        addHistory(winnerName);
         saveSettings();
     }
 }
 
 function _classicKnockoutRound(winnerItem) {
+    var winnerName = (winnerItem && typeof winnerItem === 'object') ? winnerItem.name : winnerItem;
     if (activeItems.length <= 1) {
         resetKnockout();
         resultDisplay.textContent = 'Ready to spin!';
@@ -60,25 +63,26 @@ function _classicKnockoutRound(winnerItem) {
     // Classic KO: the item the wheel lands on is ELIMINATED
     eliminateItem(winnerItem);
     playElimSound();
-    showKnockoutToast(winnerItem);
-    addHistory('💀 Eliminated: ' + winnerItem);
+    showKnockoutToast(winnerName);
+    addHistory('💀 Eliminated: ' + winnerName);
     updateKnockoutStatus();
 
     if (activeItems.length === 1) {
         var champion = activeItems[0];
+        var championName = (champion && typeof champion === 'object') ? champion.name : champion;
         setTimeout(function() {
-            resultDisplay.textContent = '🏆 ' + champion;
+            resultDisplay.textContent = '🏆 ' + championName;
             canvas.classList.add('winner-glow');
             playWinSound(true);
             startConfetti(4500);
-            showCelebrationModal('Ultimate Winner!', champion, '🏆');
-            addHistory('🏆 Ultimate Winner: ' + champion);
+            showCelebrationModal('Ultimate Winner!', championName, '🏆');
+            addHistory('🏆 Ultimate Winner: ' + championName);
             saveSettings();
             drawWheel();
             updateKnockoutStatus();
         }, 700);
     } else {
-        resultDisplay.textContent = '💀 ' + winnerItem + ' eliminated';
+        resultDisplay.textContent = '💀 ' + winnerName + ' eliminated';
         saveSettings();
         drawWheel();
     }
@@ -97,16 +101,19 @@ function _classicKnockoutRound(winnerItem) {
 // ================================================================
 
 function handleNWinSpin(winnerItem) {
+    var winnerId   = (winnerItem && typeof winnerItem === 'object') ? winnerItem.id : winnerItem;
+    var winnerName = (winnerItem && typeof winnerItem === 'object') ? winnerItem.name : winnerItem;
+
     // Track both round score and cumulative score
-    if (nWinRoundScores[winnerItem] === undefined) nWinRoundScores[winnerItem] = 0;
-    if (nWinScores[winnerItem]      === undefined) nWinScores[winnerItem]      = 0;
-    nWinRoundScores[winnerItem]++;
-    nWinScores[winnerItem]++;
+    if (nWinRoundScores[winnerId] === undefined) nWinRoundScores[winnerId] = 0;
+    if (nWinScores[winnerId]      === undefined) nWinScores[winnerId]      = 0;
+    nWinRoundScores[winnerId]++;
+    nWinScores[winnerId]++;
     nWinRemaining--;
 
-    resultDisplay.textContent = '⭐ ' + winnerItem;
+    resultDisplay.textContent = '⭐ ' + winnerName;
     playWinSound(false);
-    showScoreToast(winnerItem, nWinRoundScores[winnerItem], nWinTotal);
+    showScoreToast(winnerName, nWinRoundScores[winnerId], nWinTotal);
 
     updateScoreboard();
     updateSpinsRemaining();
@@ -114,7 +121,7 @@ function handleNWinSpin(winnerItem) {
     drawWheel();
 
     var spinNum = nWinTotal - nWinRemaining;
-    addHistory('⭐ ' + winnerItem + (knockoutEnabled
+    addHistory('⭐ ' + winnerName + (knockoutEnabled
         ? ' (R' + nWinRound + ' spin ' + spinNum + '/' + nWinTotal + ')'
         : ' (spin ' + spinNum + '/' + nWinTotal + ')'));
     saveSettings();
@@ -133,12 +140,14 @@ function _nWinKnockoutRoundEnd() {
     // Find item(s) with the highest round score
     var maxRoundScore = 0;
     activeItems.forEach(function(item) {
-        var s = nWinRoundScores[item] || 0;
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        var s = nWinRoundScores[itemId] || 0;
         if (s > maxRoundScore) maxRoundScore = s;
     });
 
     var roundLeaders = activeItems.filter(function(item) {
-        return (nWinRoundScores[item] || 0) === maxRoundScore;
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        return (nWinRoundScores[itemId] || 0) === maxRoundScore;
     });
 
     // Pick one at random if tied
@@ -147,9 +156,10 @@ function _nWinKnockoutRoundEnd() {
     eliminateItem(toEliminate);
     updateScoreboard(); // INSTANTLY update scoreboard so item drops to bottom
     
+    var toEliminateName = (toEliminate && typeof toEliminate === 'object') ? toEliminate.name : toEliminate;
     playElimSound();
-    showKnockoutToast(toEliminate);
-    addHistory('💀 Round ' + nWinRound + ' eliminated: ' + toEliminate +
+    showKnockoutToast(toEliminateName);
+    addHistory('💀 Round ' + nWinRound + ' eliminated: ' + toEliminateName +
                ' (' + maxRoundScore + ' wins this round)');
 
     nWinRound++;
@@ -158,13 +168,14 @@ function _nWinKnockoutRoundEnd() {
     if (activeItems.length === 1) {
         // Last item standing → WINNER
         var champion = activeItems[0];
+        var championName = (champion && typeof champion === 'object') ? champion.name : champion;
         setTimeout(function() {
-            resultDisplay.textContent = '🏆 ' + champion;
+            resultDisplay.textContent = '🏆 ' + championName;
             canvas.classList.add('winner-glow');
             playWinSound(true);
             startConfetti(4500);
-            showCelebrationModal('Last Standing!', champion, '🏆');
-            addHistory('🏆 N Win Champion: ' + champion);
+            showCelebrationModal('Last Standing!', championName, '🏆');
+            addHistory('🏆 N Win Champion: ' + championName);
             saveSettings();
         }, 700);
     } else if (activeItems.length === 0) {
@@ -178,7 +189,10 @@ function _nWinKnockoutRoundEnd() {
 function _nWinStartNextRound() {
     // Reset round scores for remaining active items
     nWinRoundScores = {};
-    activeItems.forEach(function(item) { nWinRoundScores[item] = 0; });
+    activeItems.forEach(function(item) {
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        nWinRoundScores[itemId] = 0;
+    });
     nWinRemaining = nWinTotal;
 
     resultDisplay.textContent = 'Round ' + nWinRound + ' — Spin!';
@@ -192,22 +206,28 @@ function finalizeNWin() {
     var pool = items.slice();
     var maxScore = 0;
     pool.forEach(function(item) {
-        maxScore = Math.max(maxScore, nWinScores[item] || 0);
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        maxScore = Math.max(maxScore, nWinScores[itemId] || 0);
     });
     var winners = pool.filter(function(item) {
-        return (nWinScores[item] || 0) === maxScore;
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        return (nWinScores[itemId] || 0) === maxScore;
     });
 
     if (winners.length === 1) {
         var winner = winners[0];
-        resultDisplay.textContent = '🏆 ' + winner;
+        var winnerName = (winner && typeof winner === 'object') ? winner.name : winner;
+        resultDisplay.textContent = '🏆 ' + winnerName;
         canvas.classList.add('winner-glow');
         playWinSound(true);
         startConfetti(4000);
-        showCelebrationModal('Most wins (' + maxScore + ')!', winner, '🏆');
-        addHistory('🏆 N Win Champion: ' + winner + ' (' + maxScore + ' wins)');
+        showCelebrationModal('Most wins (' + maxScore + ')!', winnerName, '🏆');
+        addHistory('🏆 N Win Champion: ' + winnerName + ' (' + maxScore + ' wins)');
     } else {
-        var tieText = winners.join(' & ');
+        var tieNames = winners.map(function(w) {
+            return (w && typeof w === 'object') ? w.name : w;
+        });
+        var tieText = tieNames.join(' & ');
         resultDisplay.textContent = '🤝 ' + tieText;
         playWinSound(false);
         startConfetti(3000);
@@ -230,18 +250,21 @@ function finalizeNWin() {
 // ================================================================
 
 function handleNToWinSpin(winnerItem) {
-    if (nToWinScores[winnerItem] === undefined) nToWinScores[winnerItem] = 0;
-    nToWinScores[winnerItem]++;
-    var score = nToWinScores[winnerItem];
+    var winnerId   = (winnerItem && typeof winnerItem === 'object') ? winnerItem.id : winnerItem;
+    var winnerName = (winnerItem && typeof winnerItem === 'object') ? winnerItem.name : winnerItem;
 
-    resultDisplay.textContent = '⭐ ' + winnerItem + ' (' + score + '/' + nToWinTarget + ')';
+    if (nToWinScores[winnerId] === undefined) nToWinScores[winnerId] = 0;
+    nToWinScores[winnerId]++;
+    var score = nToWinScores[winnerId];
+
+    resultDisplay.textContent = '⭐ ' + winnerName + ' (' + score + '/' + nToWinTarget + ')';
     playWinSound(false);
-    showScoreToast(winnerItem, score, nToWinTarget);
+    showScoreToast(winnerName, score, nToWinTarget);
 
     updateScoreboard();
     updateKnockoutStatus();
     drawWheel();
-    addHistory('⭐ ' + winnerItem + ' (' + score + '/' + nToWinTarget + ')');
+    addHistory('⭐ ' + winnerName + ' (' + score + '/' + nToWinTarget + ')');
 
     if (score >= nToWinTarget) {
         if (knockoutEnabled) {
@@ -251,7 +274,8 @@ function handleNToWinSpin(winnerItem) {
                 
                 // Task 4: Reset all remaining active items' scores to 0
                 activeItems.forEach(function(item) {
-                    nToWinScores[item] = 0;
+                    var itemId = (item && typeof item === 'object') ? item.id : item;
+                    nToWinScores[itemId] = 0;
                 });
 
                 updateScoreboard();
@@ -267,30 +291,31 @@ function handleNToWinSpin(winnerItem) {
                     '<div class="toast-icon">🔥</div>' +
                     '<div class="toast-body">' +
                         '<div class="toast-title">Eliminated!</div>' +
-                        '<div class="toast-desc"><strong>' + escHtml(winnerItem) + '</strong> reached ' + nToWinTarget + ' — eliminated!</div>' +
+                        '<div class="toast-desc"><strong>' + escHtml(winnerName) + '</strong> reached ' + nToWinTarget + ' — eliminated!</div>' +
                     '</div>';
                 document.body.appendChild(toast);
                 requestAnimationFrame(function() { requestAnimationFrame(function() { toast.classList.add('show'); }); });
                 setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { if (toast.parentNode) toast.remove(); }, 420); }, 2800);
 
-                addHistory('🔥 Eliminated (' + nToWinTarget + ' hits): ' + winnerItem);
+                addHistory('🔥 Eliminated (' + nToWinTarget + ' hits): ' + winnerName);
                 updateKnockoutStatus();
 
                 if (activeItems.length === 1) {
                     var survivor = activeItems[0];
+                    var survivorName = (survivor && typeof survivor === 'object') ? survivor.name : survivor;
                     setTimeout(function() {
-                        resultDisplay.textContent = '🏆 ' + survivor;
+                        resultDisplay.textContent = '🏆 ' + survivorName;
                         canvas.classList.add('winner-glow');
                         playWinSound(true);
                         startConfetti(4500);
-                        showCelebrationModal('Last Survivor!', survivor, '🏆');
-                        addHistory('🏆 N to Win Survivor: ' + survivor);
+                        showCelebrationModal('Last Survivor!', survivorName, '🏆');
+                        addHistory('🏆 N to Win Survivor: ' + survivorName);
                         saveSettings();
                     }, 700);
                 } else if (activeItems.length === 0) {
                     resetKnockout();
                 } else {
-                    resultDisplay.textContent = winnerItem + ' eliminated! Keep spinning!';
+                    resultDisplay.textContent = winnerName + ' eliminated! Keep spinning!';
                     drawWheel();
                     saveSettings();
                 }
@@ -299,12 +324,12 @@ function handleNToWinSpin(winnerItem) {
         } else {
             // No knockout: first to reach target WINS
             setTimeout(function() {
-                resultDisplay.textContent = '🏆 ' + winnerItem;
+                resultDisplay.textContent = '🏆 ' + winnerName;
                 canvas.classList.add('winner-glow');
                 playWinSound(true);
                 startConfetti(4500);
-                showCelebrationModal('First to ' + nToWinTarget + '!', winnerItem, '🏆');
-                addHistory('🏆 N to Win Champion: ' + winnerItem);
+                showCelebrationModal('First to ' + nToWinTarget + '!', winnerName, '🏆');
+                addHistory('🏆 N to Win Champion: ' + winnerName);
                 saveSettings();
             }, 350);
             return;
@@ -349,22 +374,29 @@ function updateScoreboard() {
 
     // Sort: active first sorted by score desc, eliminated last
     allItems.sort(function(a, b) {
-        var elimA = eliminatedItems.has(a) ? 1 : 0;
-        var elimB = eliminatedItems.has(b) ? 1 : 0;
+        var aId = (a && typeof a === 'object') ? a.id : a;
+        var bId = (b && typeof b === 'object') ? b.id : b;
+        var elimA = eliminatedItems.has(aId) ? 1 : 0;
+        var elimB = eliminatedItems.has(bId) ? 1 : 0;
         if (elimA !== elimB) return elimA - elimB;
-        return (scores[b] || 0) - (scores[a] || 0);
+        return (scores[bId] || 0) - (scores[aId] || 0);
     });
 
     var maxScore = 0;
-    allItems.forEach(function(item) { maxScore = Math.max(maxScore, scores[item] || 0); });
+    allItems.forEach(function(item) {
+        var itemId = (item && typeof item === 'object') ? item.id : item;
+        maxScore = Math.max(maxScore, scores[itemId] || 0);
+    });
 
     // In KO modes the LEADER is "at risk" (about to be eliminated), not "winning"
     var leaderIsGood = !knockoutEnabled;
 
     scoreboardEl.innerHTML = '';
     allItems.forEach(function(item, idx) {
-        var score    = scores[item] || 0;
-        var isElim   = eliminatedItems.has(item);
+        var itemId   = (item && typeof item === 'object') ? item.id : item;
+        var itemName = (item && typeof item === 'object') ? item.name : item;
+        var score    = scores[itemId] || 0;
+        var isElim   = eliminatedItems.has(itemId);
         var isLeader = !isElim && score === maxScore && score > 0;
         var barPct   = Math.round((score / maxPossible) * 100);
 
@@ -376,7 +408,7 @@ function updateScoreboard() {
         row.className = rowClass;
         row.innerHTML =
             '<div class="score-rank">' + (isElim ? '💀' : (idx + 1)) + '</div>' +
-            '<div class="score-name" title="' + escHtml(item) + '">' + escHtml(item) + '</div>' +
+            '<div class="score-name" title="' + escHtml(itemName) + '">' + escHtml(itemName) + '</div>' +
             '<div class="score-bar-wrap">' +
                 '<div class="score-bar" style="width:' + barPct + '%"></div>' +
             '</div>' +
