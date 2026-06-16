@@ -10,6 +10,7 @@
 var canvas        = document.getElementById('wheel');
 var ctx           = canvas.getContext('2d');
 var spinBtn       = document.getElementById('spin-btn');
+var centerSpinBtn = document.getElementById('center-spin-btn');
 var resultDisplay = document.getElementById('result-display');
 
 // Items
@@ -128,6 +129,7 @@ changeModeBtn.addEventListener('click', function() {
 
 // ---- Wheel spin ----
 spinBtn.addEventListener('click', spin);
+if (centerSpinBtn) centerSpinBtn.addEventListener('click', spin);
 
 // ---- Items textarea ----
 itemsInput.addEventListener('input', updateItems);

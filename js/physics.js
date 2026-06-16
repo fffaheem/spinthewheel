@@ -9,6 +9,9 @@ function stopWheel() {
     isSpinning = false;
     spinBtn.disabled = false;
     spinBtn.style.opacity = '1';
+    if (typeof centerSpinBtn !== 'undefined' && centerSpinBtn) {
+        centerSpinBtn.disabled = false;
+    }
 }
 
 function getWinnerIndex() {
@@ -41,6 +44,9 @@ function animate() {
             isSpinning = false;
             spinBtn.disabled = false;
             spinBtn.style.opacity = '1';
+            if (typeof centerSpinBtn !== 'undefined' && centerSpinBtn) {
+                centerSpinBtn.disabled = false;
+            }
 
             var list = getActiveList();
             var idx = getWinnerIndex();
@@ -79,6 +85,9 @@ function spin() {
     isSpinning = true;
     spinBtn.disabled = true;
     spinBtn.style.opacity = '0.5';
+    if (typeof centerSpinBtn !== 'undefined' && centerSpinBtn) {
+        centerSpinBtn.disabled = true;
+    }
     resultDisplay.textContent = 'Spinning…';
 
     var power = parseInt(powerSlider.value);
@@ -107,6 +116,9 @@ document.addEventListener('visibilitychange', function () {
         isSpinning = false;
         spinBtn.disabled = false;
         spinBtn.style.opacity = '1';
+        if (typeof centerSpinBtn !== 'undefined' && centerSpinBtn) {
+            centerSpinBtn.disabled = false;
+        }
 
         var list = getActiveList();
         var idx = getWinnerIndex();
